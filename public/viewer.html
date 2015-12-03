@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>quick webapp</title>
+  <link href="css/base.css" media="all" rel="stylesheet" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!---- JS: jquery/parse-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.15.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+<!--- App.js -->
+
+
+<script type="text/javascript">
+var access;
+
+$(document).ready(function() {
+var parse_app_id = "6IE3NXx3dSlNv2OkHZbMg6753un203i7Ogws3FAn";
+var parse_javascript_id = "MOpSrzLiAcu5ikSSNuAiq6JDuA4HAl0whokSGGC1";
+
+Parse.initialize(parse_app_id, parse_javascript_id);
+
+var parse_image_url,parse_image_name,parse_file_object;
+
+  var objReference = Parse.Object.extend("image_of_the_day");
+  var query = new Parse.Query(objReference);
+  query.limit(300);
+  query.find({
+      success: function(results) {
+         access = results;
+
+        if (results.length > 0){
+          for (var i = 0; i < results.length; i++){
+            var caption = results[i].get("caption");
+            var url = results[i].get("mainimage").url();
+
+            var temp = '<div class="col-xs-3 buffer">';
+            //temp += '<img src="' + url +'" class="img-responsive">';
+            temp += '<a href="' + url + '" target="_new">';
+            temp += '<img src="' + url +'">';
+            temp += '</a>';
+            temp += '<p>' + caption + '</p>';
+            temp += '</div>';
+            
+            $("#viewerArea").append(temp);
+
+          }
+        }
+      },
+      error: function(error) {
+          alert("Error: " + error.code + " " + error.message);
+      }
+  });
+
+});  //end document ready
+</script>
+
+<style>
+body{ 
+font-family: 'PT Sans Narrow';
+font-size:19px;
+}
+@media screen and (max-width: 700px) {
+
+img{
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+}
+.buffer{
+  margin: 0px 10px;
+}
+
+/*img{
+    max-width:300px;
+    max-height:300px;
+    width:auto;
+    height:auto;
+}*/
+
+</style>
+</head>
+
+
+<nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+              <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+              </div>
+              <ul class="nav navbar-nav navbar-left">
+                <li><a class="brandtextnavbartitle" href="./index.html">Add Images</a></li>
+                <li><a class="brandtextnavbartitle" href="./viewer.html">View Images</a></li>
+              </ul>
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+              </div>
+              <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+</nav>
+
+
+<body>
+
+<div class="loadingMask"><div class="loadingMaskContent"><img src="./img/loading.gif">Loading...</div></div>
+
+<div class="container">
+<!--BEGIN CONTENT -->
+<div id="viewerArea">
+</div>
+
+<!--END CONTENT -->
+</div>
+
+
+</body>
+
+</html>
+

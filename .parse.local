@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "Photo Of the Day": {
+      "applicationId": "6IE3NXx3dSlNv2OkHZbMg6753un203i7Ogws3FAn"
+    },
+    "_default": {
+      "link": "Photo Of the Day"
+    }
+  }
+}

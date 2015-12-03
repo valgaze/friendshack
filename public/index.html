@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>quick webapp</title>
+  <link href="css/base.css" media="all" rel="stylesheet" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!---- JS: jquery/parse-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://www.parsecdn.com/js/parse-1.2.15.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js" type="text/javascript" charset="utf-8"></script>
+<!--- App.js -->
+
+  <script type="text/javascript" src="./js/app.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+var parse_app_id = "6IE3NXx3dSlNv2OkHZbMg6753un203i7Ogws3FAn";
+var parse_javascript_id = "MOpSrzLiAcu5ikSSNuAiq6JDuA4HAl0whokSGGC1";
+
+
+Parse.initialize(parse_app_id, parse_javascript_id);
+
+//----Image preview from file slect
+var parse_image_url,parse_image_name,parse_file_object;
+
+$('#fileselect1').bind("change", function(e) {
+
+    $("#inputPhoto")[0].src = "./img/loading.gif"
+
+
+     var fileUploadControl = $("#fileselect1")[0];
+     var file = fileUploadControl.files[0];
+     var name = file.name; //This does *NOT* need to be a unique name
+     var parseFile = new Parse.File(name, file);
+
+     parseFile.save().then(function() {
+
+      parse_image_url = parseFile.url();
+      parse_image_name = name;
+      parse_file_object = parseFile;
+      $("#inputPhoto")[0].src = parse_image_url;
+
+    }, function(error) {
+
+      $("#save").prop("disabled",false);
+      alert('Whoops, it looks like there\'s an error with the image you selected. Select a different photo and try again');
+
+
+      $('#inputPhoto').attr('src', 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='); //This makes a base64 transparent gif, easier than resetting image
+
+      //error handling
+
+    });
+
+
+
+}); //----./End Image preview from file select
+
+$("#save").on("click", function(){
+
+  if (parse_file_object)  {
+    var newRecord = new Parse.Object("image_of_the_day");
+  
+    newRecord.set("mainimage", parse_file_object);
+
+    newRecord.set("caption",document.getElementById("caption").value );
+
+   newRecord.save(null, {
+      success: function(saveObject) {
+      $("#status").html('Saved successfully with objectid "' + saveObject.id + '" see it <a href="./viewer.html">here</a>');
+     },
+     error: function(saveObject, error) {
+       $("#status").html("ERROR:" + error.message);
+    }
+    }); //end save block
+
+  }
+  
+
+});
+
+
+
+
+
+});  //end document ready
+</script>
+
+<style>
+body{ 
+font-family: 'PT Sans Narrow';
+font-size:19px;
+}
+
+img{
+    max-width:300px;
+    max-height:300px;
+    width:auto;
+    height:auto;
+}
+
+</style>
+</head>
+
+
+<nav class="navbar navbar-default" role="navigation">
+        <div class="container">
+              <div class="navbar-header">
+                  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                      <span class="sr-only">Toggle navigation</span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                  </button>
+              </div>
+              <ul class="nav navbar-nav navbar-left">
+                <li><a class="brandtextnavbartitle" href="./index.html">Add Images</a></li>
+                <li><a class="brandtextnavbartitle" href="./viewer.html">View Images</a></li>
+
+              </ul>
+              <!-- Collect the nav links, forms, and other content for toggling -->
+              <div class="collapse navbar-collapse navbar-ex1-collapse">
+
+              </div>
+              <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+</nav>
+
+
+<body>
+
+<div class="loadingMask"><div class="loadingMaskContent"><img src="./img/loading.gif">Loading...</div></div>
+
+<div class="container">
+<!--BEGIN CONTENT -->
+<p> Hi and welcome to our humble little web app. We're trying to save space & only want images that are no-larger than 200px x 200px and we also really hope you don't do any XSS attacks &#9829; &#9829; &#9829;</p>
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Featured Photo [Not larger than 200x200px-- I can trust you right??]</h3>
+        </div>
+
+        <div class="panel-body text-center">
+            Add Featured Photo <img class="img-responsive center-block" id=
+            "inputPhoto" src="http://placehold.it/320x50&text=."> <span class=
+            "imageStatus"></span>
+        </div>
+
+        <div class="panel-footer">
+            <input id="fileselect1" type="file"> <input id="caption" placeholder="Add a caption" type="text"> 
+        </div>
+    </div><!--/end panel 1-->
+    <a class="btn btn-danger" href="#" id="save">Save</a> (By clicking save you pinky-promise to keep image size below 200px x 200px and not to do any script injection!)
+
+</div>
+
+<div class="col-md-8">
+    <span id="status"></span>
+</div>
+
+<!--END CONTENT -->
+</div>
+
+
+</body>
+</html>
